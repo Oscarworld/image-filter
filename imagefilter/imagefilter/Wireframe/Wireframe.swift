@@ -15,6 +15,11 @@ enum WireframeTypeTransition {
 
 class Wireframe {
     static let shared: Wireframe = Wireframe()
+    let mainColor = UIColor(red: 34/255, green: 167/255, blue: 240/255, alpha: 1)
+    
+    private init() {
+        configureAppearance(with: mainColor)
+    }
     
     private lazy var delegate: AppDelegate = {
         if let delegate = UIApplication.shared.delegate as? AppDelegate {

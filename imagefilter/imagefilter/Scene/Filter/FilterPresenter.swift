@@ -6,9 +6,21 @@
 //  Copyright © 2018 Oscar. All rights reserved.
 //
 
-protocol FilterPresenterProtocol: class {
+import UIKit
+
+protocol FilterPresenterProtocol: FilterHeaderDelegate {
     func viewDidLoad()
-    func exifButtonClicked()
+    func setImage(_ image: UIImage)
+    func updateImageView()
+    func getMainImage() -> UIImage?
+    
+    func headerHeight() -> CGFloat
+    func cellHeight() -> CGFloat
+    func numberSection() -> Int
+    func numberRow() -> Int
+    
+    func didRetrieveImages()
+    func onError()
 }
 
 class FilterPresenter: FilterPresenterProtocol {
@@ -18,10 +30,25 @@ class FilterPresenter: FilterPresenterProtocol {
     required init(view: FilterViewProtocol & BaseViewController) {
         self.view = view
     }
-    
+}
+
+// MARK: Implementation of FilterPresenterProtocol
+extension FilterPresenter {
     func viewDidLoad() {
         view.showLoading()
-        interactor.retrieveImages()
+    }
+    
+    func setImage(_ image: UIImage) {
+        interactor.saveImage(image)
+    }
+    
+    func updateImageView() {
+        let section = numberSection() - 1
+        view.tableView.reloadSections(IndexSet(integer: section), with: .automatic)
+    }
+    
+    func getMainImage() -> UIImage? {
+        return interactor.retrieveImages()
     }
     
     func didRetrieveImages() {
@@ -33,8 +60,46 @@ class FilterPresenter: FilterPresenterProtocol {
         view.hideLoading()
         view.showError()
     }
+}
+
+// MARK: Implementation of UITableViewDelegate
+extension FilterPresenter {
+    func headerHeight() -> CGFloat {
+        return 200
+    }
     
-    func exifButtonClicked() {
+    func cellHeight() -> CGFloat {
+        return 20
+    }
+    
+    func numberSection() -> Int {
+        return 1
+    }
+    
+    func numberRow() -> Int {
+        return 10
+    }
+}
+
+// MARK: Implementation of FilterHeaderDelegate
+extension FilterPresenter {
+    func didTapImageView() {
+        view.showImagePicker()
+    }
+    
+    func didTapRotate() {
+        
+    }
+    
+    func didTapInvertColors() {
+        
+    }
+    
+    func didTapMirrorImage() {
+        
+    }
+    
+    func didTapEXIF() {
         if let navigation = view.navigationController {
             Wireframe.shared.show(
                 type: DetailsViewController.self,
@@ -43,3 +108,5 @@ class FilterPresenter: FilterPresenterProtocol {
         }
     }
 }
+
+

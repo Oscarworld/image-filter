@@ -16,7 +16,7 @@ class DetailsConfigurator: DetailsConfiguratorProtocol {
         let interactor = DetailsInteractor(presenter: presenter)
         
         viewController.presenter = presenter
-        viewController.configureTitle("Информация")
+        viewController.configureTitle("EXIF")
         presenter.interactor = interactor
         presenter.viewDidLoad()
     }
