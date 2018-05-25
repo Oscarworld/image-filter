@@ -12,7 +12,7 @@ protocol FilterInteractorProtocol {
     var dataSource: FilterDataSourceProtocol! { get set }
     
     func retrieveImages() -> UIImage?
-    func saveImage(_ image: UIImage)
+    func saveImage(_ image: UIImage?)
     func downloadImage(from url: String?)
 }
 
@@ -24,13 +24,17 @@ class FilterInteractor: FilterInteractorProtocol {
         self.presenter = presenter
         self.dataSource = dataSource
         self.dataSource.downloader = Downloader()
-        
+
         configureObservers()
     }
     
     func configureObservers() {
         self.dataSource.downloader.didDownload.delegate(to: self) { (self, image) in
             self.dataSource.mainImage = image
+        }
+        
+        self.dataSource.downloader.updateProgress.delegate(to: self) { (self, value) in
+            self.presenter.updateProgressBar(to: value)
         }
         
         self.dataSource.didSetImage.delegate(to: self) { (self, image) in
@@ -41,7 +45,7 @@ class FilterInteractor: FilterInteractorProtocol {
 
 // MARK: Implementation of FilterInteractor
 extension FilterInteractor {
-    func saveImage(_ image: UIImage) {
+    func saveImage(_ image: UIImage?) {
         dataSource.mainImage = image
     }
     

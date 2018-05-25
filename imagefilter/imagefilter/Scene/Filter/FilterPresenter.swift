@@ -9,10 +9,12 @@
 import UIKit
 
 protocol FilterPresenterProtocol: FilterHeaderDelegate {
+    var headerDelegate: FilterHeaderUpdateDelegate! { get set }
+    
     func viewDidLoad()
-    func setImage(_ image: UIImage)
+    func setImage(_ image: UIImage?)
     func updateImageView()
-    func getMainImage() -> UIImage?
+    func updateProgressBar(to value: Float)
     
     func headerHeight() -> CGFloat
     func cellHeight() -> CGFloat
@@ -25,6 +27,11 @@ protocol FilterPresenterProtocol: FilterHeaderDelegate {
 
 class FilterPresenter: FilterPresenterProtocol {
     weak var view: (FilterViewProtocol & BaseViewController)!
+    weak var headerDelegate: FilterHeaderUpdateDelegate! {
+        didSet {
+            headerDelegate.updateImage(interactor.retrieveImages())
+        }
+    }
     var interactor: FilterInteractorProtocol!
     
     required init(view: FilterViewProtocol & BaseViewController) {
@@ -38,17 +45,16 @@ extension FilterPresenter {
         view.showLoading()
     }
     
-    func setImage(_ image: UIImage) {
+    func setImage(_ image: UIImage?) {
         interactor.saveImage(image)
     }
     
     func updateImageView() {
-        let section = numberSection() - 1
-        view.tableView.reloadSections(IndexSet(integer: section), with: .automatic)
+        headerDelegate.updateImage(interactor.retrieveImages())
     }
     
-    func getMainImage() -> UIImage? {
-        return interactor.retrieveImages()
+    func updateProgressBar(to value: Float) {
+        headerDelegate.updateProgress(uploaded: value)
     }
     
     func didRetrieveImages() {
