@@ -45,7 +45,7 @@ extension FilterViewController: FilterViewProtocol {
     }
     
     func showImages() {
-        tableView.reloadData()
+        
     }
     
     func showLoading() {

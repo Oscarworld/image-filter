@@ -67,7 +67,6 @@ class Wireframe {
         }
         
         return show(controller: controller, as: mode)
-        
     }
     
     private final func createController<T: UIViewController>() -> T {

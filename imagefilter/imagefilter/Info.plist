@@ -41,9 +41,9 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Это позволим вам снимать и обрабатывать снятое фото.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Это позволим вам обрабатывать фото из вашей библиотеки, а также сохранять полученные изображения.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Это позволим вам отправлять фото из вашей библиотеки.</string>
+	<string>Это позволим вам выбирать и обрабатывать фото из вашей библиотеки.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Это позволим вам сохранять полученные изображения.</string>
 </dict>
 </plist>

@@ -13,6 +13,7 @@ protocol FilterInteractorProtocol {
     
     func retrieveImages() -> UIImage?
     func saveImage(_ image: UIImage)
+    func downloadImage(from url: String?)
 }
 
 class FilterInteractor: FilterInteractorProtocol {
@@ -48,8 +49,8 @@ extension FilterInteractor {
         return dataSource.mainImage
     }
     
-    func downloadImage(url: NSURL?) {
-        if let imageURL = url {
+    func downloadImage(from url: String?) {
+        if let url = url, let imageURL = NSURL(string: url) {
             self.dataSource.downloader.downloadImage(url: imageURL)
         }
     }
