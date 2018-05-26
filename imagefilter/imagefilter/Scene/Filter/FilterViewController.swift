@@ -11,13 +11,9 @@ import UIKit
 protocol FilterViewProtocol: UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var tableView: UITableView! { get set }
     var presenter: FilterPresenterProtocol! { get set }
-    var imagePicker: UIImagePickerController! { get set }
+    weak var imagePicker: UIImagePickerController! { get set }
     
     func showImagePicker()
-    func showImages()
-    func showLoading()
-    func hideLoading()
-    func showError()
 }
 
 class FilterViewController: BaseViewController {
@@ -43,43 +39,26 @@ extension FilterViewController: FilterViewProtocol {
         
         present(imagePicker, animated: true, completion: nil)
     }
-    
-    func showImages() {
-        
-    }
-    
-    func showLoading() {
-        
-    }
-    
-    func hideLoading() {
-        
-    }
-    
-    func showError() {
-        
-    }
 }
 
 // MARK: Implementation of UITableViewDataSource and UITableViewDelegate
 extension FilterViewController {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        print("build cell")
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "result_cell", for: indexPath) as? ResultCell else {
             return UITableViewCell()
         }
-        
-        return cell
+
+        return presenter.buildCell(cell, at: indexPath)
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        print("build header")
         guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "header_view") as? FilterHeaderView else {
             return nil
         }
         
-        header.delegate = presenter
-        presenter.headerDelegate = header
-        
-        return header
+        return presenter.buildHeader(header, at: section)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -104,7 +83,6 @@ extension FilterViewController {
         if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
             presenter.setImage(pickedImage)
         }
-        
         dismiss(animated: true, completion: nil)
     }
     

@@ -11,25 +11,24 @@ import UIKit
 protocol FilterPresenterProtocol: FilterHeaderDelegate {
     var headerDelegate: FilterHeaderUpdateDelegate! { get set }
     
-    func viewDidLoad()
     func setImage(_ image: UIImage?)
     func updateImageView()
     func updateProgressBar(to value: Float)
+    
+    func buildCell(_ cell: ResultCell, at indexPath: IndexPath) -> ResultCell
+    func buildHeader(_ header: FilterHeaderView, at section: Int) -> FilterHeaderView
     
     func headerHeight() -> CGFloat
     func cellHeight() -> CGFloat
     func numberSection() -> Int
     func numberRow() -> Int
-    
-    func didRetrieveImages()
-    func onError()
 }
 
 class FilterPresenter: FilterPresenterProtocol {
     weak var view: (FilterViewProtocol & BaseViewController)!
     weak var headerDelegate: FilterHeaderUpdateDelegate! {
         didSet {
-            headerDelegate.updateImage(interactor.retrieveImages())
+            headerDelegate.updateImage(interactor.retrieveImage())
         }
     }
     var interactor: FilterInteractorProtocol!
@@ -41,41 +40,39 @@ class FilterPresenter: FilterPresenterProtocol {
 
 // MARK: Implementation of FilterPresenterProtocol
 extension FilterPresenter {
-    func viewDidLoad() {
-        view.showLoading()
-    }
-    
     func setImage(_ image: UIImage?) {
         interactor.saveImage(image)
     }
     
     func updateImageView() {
-        headerDelegate.updateImage(interactor.retrieveImages())
+        headerDelegate.updateImage(interactor.retrieveImage())
     }
     
     func updateProgressBar(to value: Float) {
         headerDelegate.updateProgress(uploaded: value)
     }
-    
-    func didRetrieveImages() {
-        view.hideLoading()
-        view.showImages()
-    }
-    
-    func onError() {
-        view.hideLoading()
-        view.showError()
-    }
 }
 
 // MARK: Implementation of UITableViewDelegate
 extension FilterPresenter {
+    func buildCell(_ cell: ResultCell, at indexPath: IndexPath) -> ResultCell {
+        let model = interactor.getOutputModel(at: indexPath)
+        cell.setModel(model)
+        return cell
+    }
+    
+    func buildHeader(_ header: FilterHeaderView, at section: Int) -> FilterHeaderView {
+        header.delegate = self
+        self.headerDelegate = header
+        return header
+    }
+    
     func headerHeight() -> CGFloat {
         return 200
     }
     
     func cellHeight() -> CGFloat {
-        return 20
+        return 160
     }
     
     func numberSection() -> Int {
@@ -83,7 +80,7 @@ extension FilterPresenter {
     }
     
     func numberRow() -> Int {
-        return 0
+        return interactor.outputImagesCount()
     }
 }
 
@@ -140,16 +137,46 @@ extension FilterPresenter {
         self.view.showMenu(title: "Загрузить изображение", message: "Выберите откуда вы хотите загрузить изображение", actions: [actionTakePhoto, actionFromPhotoLibrary, actionFromURL, CustomAlert.exit])
     }
     
-    func didTapRotate() {
-        
+    func didTapRotate(image: UIImage?) {
+        if let image = image {
+            interactor.rotateImage(image)
+            let indexPath = IndexPath(row: 0, section: 0)
+            view.tableView.insertRows(at: [indexPath], with: .automatic)
+        } else {
+            let alert = UIAlertController(title: "Ошибка", message: "Изображение не загружено", preferredStyle: .alert)
+            
+            alert.addAction(UIAlertAction(title: "Готово", style: .cancel, handler: nil))
+            
+            self.view.present(alert, animated: true, completion: nil)
+        }
     }
     
-    func didTapInvertColors() {
-        
+    func didTapInvertColors(image: UIImage?) {
+        if let image = image {
+            interactor.invertColorImage(image)
+            let indexPath = IndexPath(row: 0, section: 0)
+            view.tableView.insertRows(at: [indexPath], with: .automatic)
+        } else {
+            let alert = UIAlertController(title: "Ошибка", message: "Изображение не загружено", preferredStyle: .alert)
+            
+            alert.addAction(UIAlertAction(title: "Готово", style: .cancel, handler: nil))
+            
+            self.view.present(alert, animated: true, completion: nil)
+        }
     }
     
-    func didTapMirrorImage() {
-        
+    func didTapMirrorImage(image: UIImage?) {
+        if let image = image {
+            interactor.reflectImage(image)
+            let indexPath = IndexPath(row: 0, section: 0)
+            view.tableView.insertRows(at: [indexPath], with: .automatic)
+        } else {
+            let alert = UIAlertController(title: "Ошибка", message: "Изображение не загружено", preferredStyle: .alert)
+            
+            alert.addAction(UIAlertAction(title: "Готово", style: .cancel, handler: nil))
+            
+            self.view.present(alert, animated: true, completion: nil)
+        }
     }
     
     func didTapEXIF() {

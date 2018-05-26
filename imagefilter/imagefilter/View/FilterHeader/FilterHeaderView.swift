@@ -10,9 +10,9 @@ import UIKit
 
 protocol FilterHeaderDelegate: class {
     func didTapImageView()
-    func didTapRotate()
-    func didTapInvertColors()
-    func didTapMirrorImage()
+    func didTapRotate(image: UIImage?)
+    func didTapInvertColors(image: UIImage?)
+    func didTapMirrorImage(image: UIImage?)
     func didTapEXIF()
 }
 
@@ -32,15 +32,15 @@ class FilterHeaderView: UITableViewHeaderFooterView {
     @IBOutlet weak var progressView: UIProgressView!
     
     @IBAction func didTapRotate(_ sender: Any) {
-        delegate.didTapRotate()
+        delegate.didTapRotate(image: mainImageView.image)
     }
     
     @IBAction func didTapInvertColors(_ sender: Any) {
-        delegate.didTapInvertColors()
+        delegate.didTapInvertColors(image: mainImageView.image)
     }
     
     @IBAction func didTapMirrorImage(_ sender: Any) {
-        delegate.didTapMirrorImage()
+        delegate.didTapMirrorImage(image: mainImageView.image)
     }
     
     @IBAction func didTapEXIF(_ sender: Any) {
@@ -50,7 +50,6 @@ class FilterHeaderView: UITableViewHeaderFooterView {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        mainImageView.contentMode = .scaleAspectFit
         configureComponents()
         
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(tapGestureRecognizer:)))
@@ -59,6 +58,7 @@ class FilterHeaderView: UITableViewHeaderFooterView {
     }
     
     private func configureComponents() {
+        mainImageView.contentMode = .scaleAspectFit
         progressView.isHidden = true
         progressView.progressTintColor = Wireframe.shared.mainColor
         configureButton(rotateButton)
@@ -73,29 +73,26 @@ class FilterHeaderView: UITableViewHeaderFooterView {
         button.layer.cornerRadius = button.frame.height / 2
     }
     
-    @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer)
-    {
+    @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer) {
         delegate.didTapImageView()
     }
 }
 
 extension FilterHeaderView: FilterHeaderUpdateDelegate {
     func updateProgress(uploaded: Float) {
-        DispatchQueue.main.async {
-            self.progressView.progress = uploaded
-            self.progressView.isHidden = uploaded == 1
+        DispatchQueue.main.async { [weak self] in
+            self?.progressView.progress = uploaded
+            self?.progressView.isHidden = uploaded == 1
         }
     }
     
     func updateImage(_ image: UIImage?) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
             if let image = image {
-                self.mainImageView.image = image
+                self?.mainImageView.image = image
             } else {
-                self.mainImageView.image = UIImage(named: "add_photo")
+                self?.mainImageView.image = UIImage(named: "add_photo")
             }
         }
     }
-    
-    
 }

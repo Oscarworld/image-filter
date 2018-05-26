@@ -33,6 +33,5 @@ class FilterConfigurator: FilterConfiguratorProtocol {
         viewController.imagePicker.delegate = viewController
         
         presenter.interactor = interactor
-        presenter.viewDidLoad()
     }
 }

@@ -10,6 +10,7 @@ import UIKit
 
 protocol FilterDataSourceProtocol {
     var mainImage: UIImage? { get set }
+    var outputImages: [OutputImage] { get set }
     var downloader: Downloader! { get set }
     var didSetImage: DelegatedCall<UIImage?> { get set }
 }
@@ -20,6 +21,8 @@ class FilterDataSource: FilterDataSourceProtocol {
             didSetImage.callback?(mainImage)
         }
     }
+    var outputImages: [OutputImage] = []
+    
     var downloader: Downloader!
     var didSetImage = DelegatedCall<UIImage?>()
 }
