@@ -41,3 +41,24 @@ class BaseViewController: UIViewController, BaseViewControllerProtocol {
 extension BaseViewController {
     func decode(arguments: [String : Any]) { }
 }
+
+extension BaseViewController {
+    private func createAlertController(title: String?, message: String?, style: UIAlertControllerStyle, actions: [CustomAlert] = []) -> UIAlertController {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+        
+        for action in actions {
+            alertController.addAction(action.alert)
+        }
+        
+        return alertController
+    }
+    
+    func showMenu(title: String, message: String, style: UIAlertControllerStyle = .actionSheet, actions: [CustomAlert]) {
+        present(createAlertController(
+                title: title,
+                message: message,
+                style: style,
+                actions: actions),
+            animated: true)
+    }
+}

@@ -8,23 +8,20 @@
 
 import UIKit
 
-protocol FilterViewProtocol: class {
+protocol FilterViewProtocol: UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var tableView: UITableView! { get set }
     var presenter: FilterPresenterProtocol! { get set }
+    weak var imagePicker: UIImagePickerController! { get set }
     
-    func showImages()
-    func showLoading()
-    func hideLoading()
-    func showError()
+    func showImagePicker()
 }
 
 class FilterViewController: BaseViewController {
     @IBOutlet weak var tableView: UITableView!
-    @IBAction func moreDetailsClicked(_ sender: Any) {
-        presenter.exifButtonClicked()
-    }
     
     var presenter: FilterPresenterProtocol!
+    var imagePicker: UIImagePickerController!
+    
     let configurator: FilterConfiguratorProtocol = FilterConfigurator()
     
     override func viewDidLoad() {
@@ -34,32 +31,62 @@ class FilterViewController: BaseViewController {
     }
 }
 
+// MARK: Implementation of FilterViewProtocol
 extension FilterViewController: FilterViewProtocol {
-    func showImages() {
-        tableView.reloadData()
-    }
-    
-    func showLoading() {
+    func showImagePicker() {
+        imagePicker.allowsEditing = false
+        imagePicker.sourceType = .photoLibrary
         
-    }
-    
-    func hideLoading() {
-        
-    }
-    
-    func showError() {
-        
+        present(imagePicker, animated: true, completion: nil)
     }
 }
 
-extension FilterViewController: UITableViewDataSource, UITableViewDelegate {
+// MARK: Implementation of UITableViewDataSource and UITableViewDelegate
+extension FilterViewController {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "default_cell", for: indexPath)
+        print("build cell")
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "result_cell", for: indexPath) as? ResultCell else {
+            return UITableViewCell()
+        }
+
+        return presenter.buildCell(cell, at: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        print("build header")
+        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "header_view") as? FilterHeaderView else {
+            return nil
+        }
         
-        return cell
+        return presenter.buildHeader(header, at: section)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return presenter.numberRow()
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return presenter.numberSection()
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return presenter.cellHeight()
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return presenter.headerHeight()
+    }
+}
+
+extension FilterViewController {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            presenter.setImage(pickedImage)
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
     }
 }
