@@ -77,11 +77,7 @@ extension FilterViewController {
         }
         
         header.delegate = presenter
-        if let image = presenter.getMainImage() {
-            header.mainImageView.image = image
-        } else {
-            header.mainImageView.image = UIImage(named: "add_photo")
-        }
+        presenter.headerDelegate = header
         
         return header
     }

@@ -22,6 +22,4 @@ class FilterDataSource: FilterDataSourceProtocol {
     }
     var downloader: Downloader!
     var didSetImage = DelegatedCall<UIImage?>()
-    
-    
 }
