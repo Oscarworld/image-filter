@@ -17,10 +17,15 @@ class ResultCell: UITableViewCell {
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var outputImageView: UIImageView!
     
+    private var model: OutputImage?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-
         configureComponents()
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
     }
     
     private func configureComponents() {
@@ -29,8 +34,9 @@ class ResultCell: UITableViewCell {
         progressView.progressTintColor = Wireframe.shared.mainColor
     }
     
-    func setModel(_ model: OutputImage) {
-        updateProgress(uploaded: model.progress)
+    public func setModel(_ model: OutputImage) {
+        self.model = model
+        updateProgress(uploaded: 1)
         updateImage(model.image)
         model.delegateImage.delegate(to: self) { (self, image) in
             self.updateImage(image)
@@ -42,19 +48,23 @@ class ResultCell: UITableViewCell {
 }
 
 extension ResultCell: ResultCellUpdateDelegate {
-    func updateProgress(uploaded: Float) {
+    public func updateProgress(uploaded: Float) {
         DispatchQueue.main.async { [weak self] in
             let rounded = round(uploaded * 100) / 100
+//            self?.progressView.progress = uploaded
+//            self?.progressView.isHidden = rounded == 1.0
+//            self?.outputImageView.isHidden = rounded != 1.0
             if let progress = self?.progressView.progress, uploaded - 0.02 > progress {
-                print("Error with uploaded: \(uploaded) and progress \(progress)")
+                //print("Error with uploaded: \(uploaded) and progress \(progress)")
+            } else {
+                self?.progressView.progress = uploaded
+                self?.progressView.isHidden = rounded == 1.0
+                self?.outputImageView.isHidden = rounded != 1.0
             }
-            self?.progressView.progress = uploaded
-            self?.progressView.isHidden = rounded == 1.0
-            self?.outputImageView.isHidden = rounded != 1.0
         }
     }
     
-    func updateImage(_ image: UIImage?) {
+    public func updateImage(_ image: UIImage?) {
         DispatchQueue.main.async { [weak self] in
             self?.outputImageView.image = image
         }

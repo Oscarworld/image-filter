@@ -13,18 +13,17 @@ protocol FilterConfiguratorProtocol: class {
 }
 
 class FilterConfigurator: FilterConfiguratorProtocol {
-    func configure(with viewController: FilterViewProtocol & BaseViewController) {
+    public func configure(with viewController: FilterViewProtocol & BaseViewController) {
         let presenter = FilterPresenter(view: viewController)
         let dataSource = FilterDataSource()
         let interactor = FilterInteractor(presenter: presenter, dataSource: dataSource)
         let imagePicker = UIImagePickerController()
         
-        interactor.dataSource = dataSource
-        
         viewController.configureTitle("Filter")
         viewController.presenter = presenter
         viewController.imagePicker = imagePicker
         
+        viewController.tableView.tableFooterView = UIView()
         viewController.tableView.register(UINib(nibName: "FilterHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: "header_view")
         viewController.tableView.register(UINib(nibName: "ResultCell", bundle: nil), forCellReuseIdentifier: "result_cell")
         

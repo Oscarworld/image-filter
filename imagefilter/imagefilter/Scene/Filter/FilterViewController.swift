@@ -11,12 +11,10 @@ import UIKit
 protocol FilterViewProtocol: UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var tableView: UITableView! { get set }
     var presenter: FilterPresenterProtocol! { get set }
-    weak var imagePicker: UIImagePickerController! { get set }
-    
-    func showImagePicker()
+    var imagePicker: UIImagePickerController! { get set }
 }
 
-class FilterViewController: BaseViewController {
+class FilterViewController: BaseViewController, FilterViewProtocol {
     @IBOutlet weak var tableView: UITableView!
     
     var presenter: FilterPresenterProtocol!
@@ -26,39 +24,23 @@ class FilterViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.tableFooterView = UIView()
         configurator.configure(with: self)
-    }
-}
-
-// MARK: Implementation of FilterViewProtocol
-extension FilterViewController: FilterViewProtocol {
-    func showImagePicker() {
-        imagePicker.allowsEditing = false
-        imagePicker.sourceType = .photoLibrary
-        
-        present(imagePicker, animated: true, completion: nil)
     }
 }
 
 // MARK: Implementation of UITableViewDataSource and UITableViewDelegate
 extension FilterViewController {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("build cell")
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "result_cell", for: indexPath) as? ResultCell else {
-            return UITableViewCell()
-        }
-
-        return presenter.buildCell(cell, at: indexPath)
+        return presenter.buildCell(at: indexPath)
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        print("build header")
-        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "header_view") as? FilterHeaderView else {
-            return nil
-        }
-        
-        return presenter.buildHeader(header, at: section)
+        return presenter.buildHeader(at: section)
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        presenter.showCellMenu(for: indexPath)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -79,14 +61,11 @@ extension FilterViewController {
 }
 
 extension FilterViewController {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            presenter.setImage(pickedImage)
-        }
-        dismiss(animated: true, completion: nil)
+    @objc func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        presenter.didFinishPicking(with: info)
     }
     
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        dismiss(animated: true, completion: nil)
+    @objc func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        presenter.didCancelPicking()
     }
 }
