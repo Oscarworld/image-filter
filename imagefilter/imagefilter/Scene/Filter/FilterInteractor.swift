@@ -9,13 +9,15 @@
 import UIKit
 
 protocol FilterInteractorProtocol {
-    var dataSource: FilterDataSourceProtocol! { get set }
-    
     func retrieveImage() -> UIImage?
     func saveImage(_ image: UIImage?)
     func downloadImage(from url: String?)
     
-    func outputImagesCount() -> Int
+    func setMainImage(at indexPath: IndexPath) -> Bool
+    func saveImageToLibrary(at indexPath: IndexPath) -> Bool
+    func deleteImage(at indexPath: IndexPath)
+    
+    func rowCount() -> Int
     func getOutputModel(at indexPath: IndexPath) -> OutputImage
     
     func rotateImage(_ image: UIImage)
@@ -24,8 +26,8 @@ protocol FilterInteractorProtocol {
 }
 
 class FilterInteractor: FilterInteractorProtocol {
-    weak var presenter: FilterPresenterProtocol!
-    var dataSource: FilterDataSourceProtocol!
+    private weak var presenter: FilterPresenterProtocol!
+    private var dataSource: FilterDataSourceProtocol!
     
     required init(presenter: FilterPresenterProtocol, dataSource: FilterDataSourceProtocol) {
         self.presenter = presenter
@@ -35,171 +37,216 @@ class FilterInteractor: FilterInteractorProtocol {
         configureObservers()
     }
     
-    func configureObservers() {
+    private func configureObservers() {
         dataSource.downloader.didDownload.delegate(to: self) { (self, image) in
             self.dataSource.mainImage = image
         }
         
         dataSource.downloader.updateProgress.delegate(to: self) { (self, value) in
-            self.presenter.updateProgressBar(to: value)
+            self.presenter.updateHeaderProgressBar(to: value)
         }
         
         dataSource.didSetImage.delegate(to: self) { (self, image) in
-            self.presenter.updateImageView()
+            self.presenter.updateHeaderImageView()
         }
     }
 }
 
 // MARK: Implementation of FilterInteractor
 extension FilterInteractor {
-    func saveImage(_ image: UIImage?) {
+    public func saveImage(_ image: UIImage?) {
         dataSource.mainImage = image
     }
     
-    func retrieveImage() -> UIImage? {
+    public func retrieveImage() -> UIImage? {
         return dataSource.mainImage
     }
     
-    func downloadImage(from url: String?) {
+    public func downloadImage(from url: String?) {
         if let url = url, let imageURL = NSURL(string: url) {
             self.dataSource.downloader.downloadImage(url: imageURL)
         }
     }
     
-    func getOutputModel(at indexPath: IndexPath) -> OutputImage {
+    public func setMainImage(at indexPath: IndexPath) -> Bool {
+//        dataSource.mainImage = dataSource.outputImages[indexPath.row]
+//        return true
+        if let image = dataSource.outputImages[indexPath.row].image {
+            dataSource.mainImage = image
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    public func saveImageToLibrary(at indexPath: IndexPath) -> Bool {
+//        UIImageWriteToSavedPhotosAlbum(dataSource.outputImages[indexPath.row], self, nil, nil)
+//        return true
+        if let image = dataSource.outputImages[indexPath.row].image {
+            UIImageWriteToSavedPhotosAlbum(image, self, nil, nil)
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    public func deleteImage(at indexPath: IndexPath) {
+        dataSource.outputImages.remove(at: indexPath.row)
+    }
+    
+    public func getOutputModel(at indexPath: IndexPath) -> OutputImage {
         return dataSource.outputImages[indexPath.row]
     }
     
-    func outputImagesCount() -> Int {
+    public func rowCount() -> Int {
         return dataSource.outputImages.count
     }
 }
 
 // MARK: Implementation of Filtering image
 extension FilterInteractor {
-    func rotateImage(_ image: UIImage) {
+    public func rotateImage(_ image: UIImage) {
+//        dataSource.outputImages.insert(image, at: 0)
+//        guard let ciImage = CIImage(image: image) else {
+//            return
+//        }
+//        
+//        let angel = 90 * Double.pi / 180
+//        let newAngle = CGFloat(angel) * CGFloat(-1)
+//        let transform = CATransform3DRotate(CATransform3DIdentity, CGFloat(newAngle), 0, 0, 1)
+//        let affineTransform = CATransform3DGetAffineTransform(transform)
+//        
+//        let filter = CIFilter(name: "CIAffineTransform")
+//        filter?.setValue(ciImage, forKey: kCIInputImageKey)
+//        filter?.setDefaults()
+//        
+//        filter?.setValue(NSValue(cgAffineTransform: affineTransform), forKey: kCIInputTransformKey)
+//        
+//        let contex = CIContext(options: [kCIContextUseSoftwareRenderer:true])
+//        
+//        guard let filtered = filter?.outputImage, let cgImage = contex.createCGImage(filtered, from: filtered.extent) else {
+//            return
+//        }
+//        
+//        let newImage = UIImage(cgImage: cgImage)
+//        dataSource.outputImages.insert(newImage, at: 0)
+        
         let outputImage = OutputImage()
         dataSource.outputImages.insert(outputImage, at: 0)
-        
+
         let queue = DispatchQueue(label: "rotate \(dataSource.outputImages.count)")
-        
-        queue.async {
+
+        queue.async { [weak self] in
             guard let ciImage = CIImage(image: image) else {
                 return
             }
-            
+
             let angel = 90 * Double.pi / 180
             let newAngle = CGFloat(angel) * CGFloat(-1)
             let transform = CATransform3DRotate(CATransform3DIdentity, CGFloat(newAngle), 0, 0, 1)
             let affineTransform = CATransform3DGetAffineTransform(transform)
-            
+
             let filter = CIFilter(name: "CIAffineTransform")
             filter?.setValue(ciImage, forKey: kCIInputImageKey)
             filter?.setDefaults()
-            
+
             filter?.setValue(NSValue(cgAffineTransform: affineTransform), forKey: kCIInputTransformKey)
-            
+
             let contex = CIContext(options: [kCIContextUseSoftwareRenderer:true])
-            
+
             guard let filtered = filter?.outputImage, let cgImage = contex.createCGImage(filtered, from: filtered.extent) else {
                 return
             }
-            
+
             let newImage = UIImage(cgImage: cgImage)
-            
-            let sem = DispatchSemaphore(value: 2)
-            DispatchQueue.concurrentPerform(iterations: 50) { (id: Int) in
-                //print(queue.label)
-                sem.wait(timeout: DispatchTime.distantFuture)
-                usleep(arc4random_uniform(200) * 1000)
-                outputImage.progress += 0.02
-                sem.signal()
+
+            let slowerQueue = DispatchQueue(label: "rotate slower \(self?.dataSource.outputImages.count ?? -1)")
+
+            for _ in 0..<50 {
+                slowerQueue.sync {
+                    usleep(arc4random_uniform(200) * 1000)
+                    outputImage.progress += 0.02
+                }
             }
-            
-            queue.async (flags: .barrier) {
-                outputImage.image = newImage
-            }
+
+            outputImage.image = newImage
         }
     }
     
-    func invertColorImage(_ image: UIImage) {
+    public func invertColorImage(_ image: UIImage) {
         let outputImage = OutputImage()
         dataSource.outputImages.insert(outputImage, at: 0)
-        
-        let queue = DispatchQueue(label: "rotate \(dataSource.outputImages.count)")
-        
-        queue.async {
+
+        let queue = DispatchQueue(label: "inverte \(dataSource.outputImages.count)")
+
+        queue.async { [weak self] in
             guard let ciImage = CIImage(image: image) else {
                 return
             }
-            
+
             let filter = CIFilter(name: "CIColorControls")
             filter?.setValue(ciImage, forKey: kCIInputImageKey)
             filter?.setValue(0.0, forKey: kCIInputSaturationKey)
-            
+
             let contex = CIContext(options: [kCIContextUseSoftwareRenderer:true])
-            
+
             guard let filtered = filter?.outputImage, let cgImage = contex.createCGImage(filtered, from: filtered.extent) else {
                 return
             }
-            
+
             let newImage = UIImage(cgImage: cgImage)
-            
-            let sem = DispatchSemaphore(value: 2)
-            DispatchQueue.concurrentPerform(iterations: 50) { (id: Int) in
-                //print(queue.label)
-                sem.wait(timeout: DispatchTime.distantFuture)
-                usleep(arc4random_uniform(200) * 1000)
-                outputImage.progress += 0.02
-                sem.signal()
+
+            let slowerQueue = DispatchQueue(label: "inverte slower \(self?.dataSource.outputImages.count ?? -1)")
+
+            for _ in 0..<50 {
+                slowerQueue.sync {
+                    usleep(arc4random_uniform(200) * 1000)
+                    outputImage.progress += 0.02
+                }
             }
-            
-            queue.async (flags: .barrier) {
-                outputImage.image = newImage
-            }
+
+            outputImage.image = newImage
         }
     }
     
-    func reflectImage(_ image: UIImage) {
+    public func reflectImage(_ image: UIImage) {
         let outputImage = OutputImage()
         dataSource.outputImages.insert(outputImage, at: 0)
-        
-        let queue = DispatchQueue(label: "rotate \(dataSource.outputImages.count)")
-        
-        queue.async {
+
+        let queue = DispatchQueue(label: "reflect \(dataSource.outputImages.count)")
+
+        queue.async { [weak self] in
             guard let ciImage = CIImage(image: image) else {
                 return
             }
-            
+
             let transform = CATransform3DRotate(CATransform3DIdentity, CGFloat(1 * Double.pi), 0, 1, 0)
             let affineTransform = CATransform3DGetAffineTransform(transform)
-            
+
             let filter = CIFilter(name: "CIAffineTransform")
             filter?.setValue(ciImage, forKey: kCIInputImageKey)
             filter?.setDefaults()
-            
+
             filter?.setValue(NSValue(cgAffineTransform: affineTransform), forKey: kCIInputTransformKey)
-            
-            let contex = CIContext(options: [kCIContextUseSoftwareRenderer:true])
-            
+
+            let contex = CIContext(options: [kCIContextUseSoftwareRenderer: true])
+
             guard let filtered = filter?.outputImage, let cgImage = contex.createCGImage(filtered, from: filtered.extent) else {
                 return
             }
-            
+
             let newImage = UIImage(cgImage: cgImage)
-            
-            let sem = DispatchSemaphore(value: 2)
-            DispatchQueue.concurrentPerform(iterations: 50) { (id: Int) in
-                //print(queue.label)
-                sem.wait(timeout: DispatchTime.distantFuture)
-                usleep(arc4random_uniform(200) * 1000)
-                outputImage.progress += 0.02
-                sem.signal()
+
+            let slowerQueue = DispatchQueue(label: "reflect slower \(self?.dataSource.outputImages.count ?? -1)")
+
+            for _ in 0..<50 {
+                slowerQueue.sync {
+                    usleep(arc4random_uniform(200) * 1000)
+                    outputImage.progress += 0.02
+                }
             }
-            
-            queue.async (flags: .barrier) {
-                outputImage.image = newImage
-            }
+
+            outputImage.image = newImage
         }
     }
 }

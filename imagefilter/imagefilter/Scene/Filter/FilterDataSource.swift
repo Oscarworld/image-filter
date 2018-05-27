@@ -16,13 +16,13 @@ protocol FilterDataSourceProtocol {
 }
 
 class FilterDataSource: FilterDataSourceProtocol {
-    var mainImage: UIImage? {
+    public var mainImage: UIImage? {
         didSet {
             didSetImage.callback?(mainImage)
         }
     }
-    var outputImages: [OutputImage] = []
+    public var outputImages: [OutputImage] = []
     
-    var downloader: Downloader!
-    var didSetImage = DelegatedCall<UIImage?>()
+    public var downloader: Downloader!
+    public var didSetImage = DelegatedCall<UIImage?>()
 }
