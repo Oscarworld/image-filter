@@ -17,15 +17,11 @@ class ResultCell: UITableViewCell {
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var outputImageView: UIImageView!
     
-    private var model: OutputImage?
+    private var model: PhotoRecord?
     
     override func awakeFromNib() {
         super.awakeFromNib()
         configureComponents()
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
     }
     
     private func configureComponents() {
@@ -34,16 +30,16 @@ class ResultCell: UITableViewCell {
         progressView.progressTintColor = Wireframe.shared.mainColor
     }
     
-    public func setModel(_ model: OutputImage) {
+    public func setModel(_ model: PhotoRecord) {
         self.model = model
         updateProgress(uploaded: 1)
         updateImage(model.image)
-        model.delegateImage.delegate(to: self) { (self, image) in
-            self.updateImage(image)
-        }
-        model.delegateProgress.delegate(to: self) { (self, value) in
-            self.updateProgress(uploaded: value)
-        }
+//        model.delegateImage.delegate(to: self) { (self, image) in
+//            self.updateImage(image)
+//        }
+//        model.delegateProgress.delegate(to: self) { (self, value) in
+//            self.updateProgress(uploaded: value)
+//        }
     }
 }
 

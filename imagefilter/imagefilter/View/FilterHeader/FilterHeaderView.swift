@@ -10,9 +10,7 @@ import UIKit
 
 protocol FilterHeaderDelegate: class {
     func didTapImageView()
-    func didTapRotate(image: UIImage?)
-    func didTapInvertColors(image: UIImage?)
-    func didTapMirrorImage(image: UIImage?)
+    func didTapFilter(image: UIImage?, with filter: PhotoFilterType)
     func didTapEXIF()
 }
 
@@ -39,7 +37,7 @@ class FilterHeaderView: UITableViewHeaderFooterView {
             return
         }
 
-        delegate.didTapRotate(image: image)
+        delegate.didTapFilter(image: image, with: .rotate)
     }
     
     @IBAction func didTapInvertColors(_ sender: Any) {
@@ -48,7 +46,7 @@ class FilterHeaderView: UITableViewHeaderFooterView {
             return
         }
         
-        delegate.didTapInvertColors(image: image)
+        delegate.didTapFilter(image: image, with: .bw)
     }
     
     @IBAction func didTapMirrorImage(_ sender: Any) {
@@ -57,7 +55,7 @@ class FilterHeaderView: UITableViewHeaderFooterView {
             return
         }
         
-        delegate.didTapMirrorImage(image: image)
+        delegate.didTapFilter(image: image, with: .mirror)
     }
     
     @IBAction func didTapEXIF(_ sender: Any) {

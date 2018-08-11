@@ -10,6 +10,9 @@
 		5517A9B520B7318F00D10EAE /* DelegatedCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5517A9B420B7318F00D10EAE /* DelegatedCall.swift */; };
 		5517A9B720B7324200D10EAE /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5517A9B620B7324200D10EAE /* Downloader.swift */; };
 		5517A9B920B73DCD00D10EAE /* Wireframe+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5517A9B820B73DCD00D10EAE /* Wireframe+Appearance.swift */; };
+		551FA1EC20BBAA6900EA77B6 /* PhotoRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551FA1EB20BBAA6900EA77B6 /* PhotoRecord.swift */; };
+		551FA1EE20BBAB9C00EA77B6 /* PendingOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551FA1ED20BBAB9C00EA77B6 /* PendingOperations.swift */; };
+		551FA1F020BBADBF00EA77B6 /* ImageFiltration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551FA1EF20BBADBF00EA77B6 /* ImageFiltration.swift */; };
 		559018ED20B5D491003C5944 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559018EC20B5D491003C5944 /* AppDelegate.swift */; };
 		559018F420B5D492003C5944 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 559018F320B5D492003C5944 /* Assets.xcassets */; };
 		559018F720B5D492003C5944 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 559018F520B5D492003C5944 /* LaunchScreen.storyboard */; };
@@ -22,7 +25,7 @@
 		5590191320B5E3D2003C5944 /* FilterInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5590191220B5E3D2003C5944 /* FilterInteractor.swift */; };
 		5590191520B5E3DF003C5944 /* FilterDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5590191420B5E3DF003C5944 /* FilterDataSource.swift */; };
 		55AE9D9920B93B3500441F7C /* OutputImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AE9D9820B93B3500441F7C /* OutputImage.swift */; };
-		55C99C6B20B7A8AC00CAB3EC /* ActionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C99C6A20B7A8AC00CAB3EC /* ActionConfiguration.swift */; };
+		55C99C6B20B7A8AC00CAB3EC /* CustomAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C99C6A20B7A8AC00CAB3EC /* CustomAlert.swift */; };
 		55C99C6D20B7C07300CAB3EC /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C99C6C20B7C07300CAB3EC /* DownloadManager.swift */; };
 		55D8EF1D20B70DF300293C6F /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D8EF1B20B70DF300293C6F /* DetailsViewController.swift */; };
 		55D8EF1E20B70DF300293C6F /* DetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55D8EF1C20B70DF300293C6F /* DetailsViewController.xib */; };
@@ -40,6 +43,9 @@
 		5517A9B420B7318F00D10EAE /* DelegatedCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DelegatedCall.swift; sourceTree = "<group>"; };
 		5517A9B620B7324200D10EAE /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
 		5517A9B820B73DCD00D10EAE /* Wireframe+Appearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Wireframe+Appearance.swift"; sourceTree = "<group>"; };
+		551FA1EB20BBAA6900EA77B6 /* PhotoRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoRecord.swift; sourceTree = "<group>"; };
+		551FA1ED20BBAB9C00EA77B6 /* PendingOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingOperations.swift; sourceTree = "<group>"; };
+		551FA1EF20BBADBF00EA77B6 /* ImageFiltration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFiltration.swift; sourceTree = "<group>"; };
 		559018E920B5D491003C5944 /* imagefilter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imagefilter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		559018EC20B5D491003C5944 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		559018F320B5D492003C5944 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -54,7 +60,7 @@
 		5590191220B5E3D2003C5944 /* FilterInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterInteractor.swift; sourceTree = "<group>"; };
 		5590191420B5E3DF003C5944 /* FilterDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterDataSource.swift; sourceTree = "<group>"; };
 		55AE9D9820B93B3500441F7C /* OutputImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputImage.swift; sourceTree = "<group>"; };
-		55C99C6A20B7A8AC00CAB3EC /* ActionConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionConfiguration.swift; sourceTree = "<group>"; };
+		55C99C6A20B7A8AC00CAB3EC /* CustomAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlert.swift; sourceTree = "<group>"; };
 		55C99C6C20B7C07300CAB3EC /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		55D8EF1B20B70DF300293C6F /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
 		55D8EF1C20B70DF300293C6F /* DetailsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DetailsViewController.xib; sourceTree = "<group>"; };
@@ -83,9 +89,10 @@
 			isa = PBXGroup;
 			children = (
 				5517A9B420B7318F00D10EAE /* DelegatedCall.swift */,
-				55C99C6A20B7A8AC00CAB3EC /* ActionConfiguration.swift */,
+				55C99C6A20B7A8AC00CAB3EC /* CustomAlert.swift */,
 				5517A9B620B7324200D10EAE /* Downloader.swift */,
 				55C99C6C20B7C07300CAB3EC /* DownloadManager.swift */,
+				551FA1EF20BBADBF00EA77B6 /* ImageFiltration.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -167,6 +174,8 @@
 			isa = PBXGroup;
 			children = (
 				55AE9D9820B93B3500441F7C /* OutputImage.swift */,
+				551FA1EB20BBAA6900EA77B6 /* PhotoRecord.swift */,
+				551FA1ED20BBAB9C00EA77B6 /* PendingOperations.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -311,7 +320,7 @@
 			files = (
 				5517A9B920B73DCD00D10EAE /* Wireframe+Appearance.swift in Sources */,
 				5590191120B5E3C4003C5944 /* FilterPresenter.swift in Sources */,
-				55C99C6B20B7A8AC00CAB3EC /* ActionConfiguration.swift in Sources */,
+				55C99C6B20B7A8AC00CAB3EC /* CustomAlert.swift in Sources */,
 				55D8EF3420B714CA00293C6F /* FilterHeaderView.swift in Sources */,
 				5590190D20B5DD3A003C5944 /* Wireframe.swift in Sources */,
 				55D8EF2620B70E2400293C6F /* DetailsConfigurator.swift in Sources */,
@@ -324,12 +333,15 @@
 				55C99C6D20B7C07300CAB3EC /* DownloadManager.swift in Sources */,
 				5517A9B520B7318F00D10EAE /* DelegatedCall.swift in Sources */,
 				5517A9B720B7324200D10EAE /* Downloader.swift in Sources */,
+				551FA1EC20BBAA6900EA77B6 /* PhotoRecord.swift in Sources */,
+				551FA1EE20BBAB9C00EA77B6 /* PendingOperations.swift in Sources */,
 				55D8EF2220B70E0D00293C6F /* DetailsPresenter.swift in Sources */,
 				55D8EF2020B70DFF00293C6F /* DetailsInteractor.swift in Sources */,
 				5590190520B5D99C003C5944 /* FilterViewController.swift in Sources */,
 				5590190F20B5E3B3003C5944 /* FilterConfigurator.swift in Sources */,
 				5590190920B5DA09003C5944 /* BaseViewController.swift in Sources */,
 				559018ED20B5D491003C5944 /* AppDelegate.swift in Sources */,
+				551FA1F020BBADBF00EA77B6 /* ImageFiltration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -21,6 +21,9 @@ protocol FilterPresenterProtocol: FilterHeaderDelegate {
     func buildHeader(at section: Int) -> UITableViewHeaderFooterView?
     func showCellMenu(for indexPath: IndexPath)
     
+    func reloadRow(at indexPaths: [IndexPath])
+    func reloadTableView()
+    
     func headerHeight() -> CGFloat
     func cellHeight() -> CGFloat
     func numberSection() -> Int
@@ -76,8 +79,30 @@ extension FilterPresenter {
             return UITableViewCell()
         }
         
-        let model = interactor.getOutputModel(at: indexPath)
-        cell.setModel(model)
+        if cell.accessoryView == nil {
+            let indicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+            cell.accessoryView = indicator
+        }
+        
+        let indicator = cell.accessoryView as! UIActivityIndicatorView
+        
+        let photo = interactor.getPhoto(at: indexPath)
+        
+        cell.setModel(photo)
+        
+        switch photo.state {
+        case .filtered:
+            indicator.stopAnimating()
+        case .new:
+            indicator.startAnimating()
+            if (!view.tableView.isDragging && !view.tableView.isDecelerating) {
+                interactor.applyFilter(for: photo, at: indexPath)
+            }
+        case .failed:
+            cell.backgroundColor = .red
+            indicator.stopAnimating()
+        }
+        
         return cell
     }
     
@@ -144,6 +169,14 @@ extension FilterPresenter {
     public func numberRow() -> Int {
         return interactor.rowCount()
     }
+    
+    func reloadRow(at indexPaths: [IndexPath]) {
+        view.tableView.reloadRows(at: indexPaths, with: .automatic)
+    }
+    
+    func reloadTableView() {
+        view.tableView.reloadData()
+    }
 }
 
 // MARK: Implementation of FilterHeaderDelegate
@@ -204,41 +237,10 @@ extension FilterPresenter {
             actions: [actionTakePhoto, actionFromPhotoLibrary, actionFromURL, CustomAlert.exit])
     }
     
-    public func didTapRotate(image: UIImage?) {
+    public func didTapFilter(image: UIImage?, with filter: PhotoFilterType) {
         if let image = image {
-            interactor.rotateImage(image)
-            let indexPath = IndexPath(row: 0, section: 0)
-            view.tableView.insertRows(at: [indexPath], with: .automatic)
-        } else {
-            let alertController = createAlertController(
-                title: "Ошибка",
-                message: "Изображение не загруженоу",
-                alertTitle: "Готово",
-                alertStyle: .cancel)
-            self.view.present(alertController, animated: true, completion: nil)
-        }
-    }
-    
-    public func didTapInvertColors(image: UIImage?) {
-        if let image = image {
-            interactor.invertColorImage(image)
-            let indexPath = IndexPath(row: 0, section: 0)
-            view.tableView.insertRows(at: [indexPath], with: .automatic)
-        } else {
-            let alertController = createAlertController(
-                title: "Ошибка",
-                message: "Изображение не загруженоу",
-                alertTitle: "Готово",
-                alertStyle: .cancel)
-            self.view.present(alertController, animated: true, completion: nil)
-        }
-    }
-    
-    public func didTapMirrorImage(image: UIImage?) {
-        if let image = image {
-            interactor.reflectImage(image)
-            let indexPath = IndexPath(row: 0, section: 0)
-            view.tableView.insertRows(at: [indexPath], with: .automatic)
+            interactor.createImage(image, with: filter)
+            view.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
         } else {
             let alertController = createAlertController(
                 title: "Ошибка",

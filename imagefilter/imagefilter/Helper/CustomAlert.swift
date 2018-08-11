@@ -1,5 +1,5 @@
 //
-//  ActionConfiguration.swift
+//  CustomAlert.swift
 //  imagefilter
 //
 //  Created by Oscar on 25/05/2018.
